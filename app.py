@@ -2,7 +2,8 @@ import streamlit as st
 import spacy
 import pickle
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+#from selenium.webdriver.chrome.options import Options
+import os
 class BagOfWords():
     def __init__(self,df,no_of_labels,labels):
         self.df=df
@@ -54,11 +55,12 @@ if button:
     if text.startswith('http:') or text.startswith('https:'):
         try:
             with st.spinner('Please wait trying to fetch content from the URL'):
-                options=Options()
-                options.headless=True
-                options.add_argument("--window-size=1920,1200")
-                DRIVER_PATH= "C:/Users/acer/chromedriver_win32/chromedriver"
-                driver=webdriver.Chrome(options=options,executable_path=DRIVER_PATH)
+                chrome_options = webdriver.ChromeOptions()
+                chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+                chrome_options.add_argument("--headless")
+                chrome_options.add_argument("--disable-dev-shm-usage")
+                chrome_options.add_argument("--no-sandbox")
+                driver=webdriver.Chrome(chrome_options=chrome_options,executable_path=os.environ.get("CHROMEDRIVER_PATH"))
                 driver.get(text)
                 h1=driver.title
                 if '|' in h1:
